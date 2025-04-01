@@ -42,24 +42,59 @@ if uploaded_file:
     with st.spinner("Processing PDF..."):
         documents = get_pdf_text(uploaded_file)
 
-        if documents:
-            # Show sample
-            st.subheader("📄 Extracted Sample")
-            st.write(documents[0].page_content[:800] + "...")
+    if documents:
+        st.subheader("📄 Extracted Sample")
+        st.write(documents[0].page_content[:800] + "...")
 
-            # Create vectorstore
-            vectorstore = create_vectorstore_from_texts(documents, uploaded_file.name)
+        vectorstore = create_vectorstore_from_texts(documents, uploaded_file.name)
 
-            # 🔁 Summarize in chunks
-            full_text = " ".join(doc.page_content for doc in documents)
-            chunk_size = 3000
-            text_chunks = [full_text[i:i+chunk_size] for i in range(0, len(full_text), chunk_size)]
+        full_text = " ".join(doc.page_content for doc in documents)
+        chunk_size = 3000
+        text_chunks = [full_text[i:i+chunk_size] for i in range(0, len(full_text), chunk_size)]
 
-            # Guided summarization
-            keywords = [kw.strip() for kw in focus_terms.split(",")] if focus_terms else None
-            summary = summarize_chunks_with_keywords(text_chunks, keywords=keywords)
+        keywords = [kw.strip() for kw in focus_terms.split(",")] if focus_terms else None
+        summary = summarize_chunks_with_keywords(text_chunks, keywords=keywords)
 
-            st.subheader("📝 Summary")
-            st.write(summary)
-        else:
-            st.error("No content could be extracted from the PDF.")
+        st.subheader("📝 Summary")
+        st.write(summary)
+    else:
+        st.error("No content could be extracted from the PDF.")
+
+# ✅ Q&A section should not be nested in the spinner
+if uploaded_file and documents:
+    st.subheader("💬 Ask a Question About the Report")
+
+    query = st.text_input("Type your question here:", placeholder="e.g., What are Amazon's logistics goals this year?")
+
+    if query:
+        with st.spinner("Searching for an answer..."):
+            try:
+                retriever = vectorstore.as_retriever(search_type="similarity")
+                docs = retriever.get_relevant_documents(query)
+                context = "\n\n".join(doc.page_content for doc in docs)
+
+                keyword_str = ", ".join(keywords) if keywords else "no specific focus"
+                prompt = f"""
+You are an assistant helping analyze Amazon's annual report. Focus especially on the following terms: {keyword_str}.
+
+Use only the context below from the report to answer the question. If the answer isn't in the context, say you don't know.
+
+Context:
+{context}
+
+Question: {query}
+
+Answer:"""
+
+                response = openai.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=0.3,
+                )
+
+                answer = response.choices[0].message.content
+                st.markdown("**Answer:**")
+                st.write(answer)
+
+            except Exception as e:
+                st.error(f"Error generating answer: {e}")
