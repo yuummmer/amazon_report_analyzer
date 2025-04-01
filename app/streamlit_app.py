@@ -4,7 +4,6 @@ import os
 
 from data_loader import load_word_data
 from visuals import plot_top_words
-from llm_summarizer import summarize_text_chunks
 from summarizer_guided import summarize_chunks_with_keywords
 from retriever import query_document
 from pdf_utils import (
