@@ -5,7 +5,6 @@ import os
 from data_loader import load_word_data
 from visuals import plot_top_words
 from summarizer_guided import summarize_chunks_with_keywords
-from retriever import query_document
 from pdf_utils import (
     get_pdf_text,
     create_vectorstore_from_texts
@@ -74,6 +73,7 @@ if uploaded_file:
 
             # Store vectorstore in session state for Q&A
             st.session_state["vectorstore"] = vectorstore
+            st.session_state["summary_text"] = summary
 
         else:
             st.error("No content could be extracted from the PDF.")
@@ -119,3 +119,31 @@ Answer:"""
                     st.error(f"Error generating answer: {e}")
         else:
             st.warning("Please upload and process a PDF first.")
+            
+    # 🔮 Forecast Section
+    st.subheader("🔮 What's Next? LLM Forecast")
+    if "summary_text" in st.session_state:
+        forecast_prompt = f"""
+Based on the following summary of Amazon's {selected_year} annual report, forecast what strategic moves Amazon is likely to make next.
+Consider how Amazon positions itself, recurring themes, and shifts in language. Focus on how Amazon expands into new industries or justifies its scale.
+
+Summary of the {selected_year} report:
+{st.session_state['summary_text']}
+
+What are Amazon's likely next moves?
+"""
+
+        if st.button("Generate Forecast"):
+            with st.spinner("Thinking about Amazon's next moves..."):
+                try:
+                    client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+                    response = client.chat.completions.create(
+                        model="gpt-3.5-turbo",
+                        messages=[{"role": "user", "content": forecast_prompt}],
+                        temperature=0.4,
+                    )
+                    forecast = response.choices[0].message.content
+                    st.markdown("**Predicted Strategic Moves:**")
+                    st.write(forecast)
+                except Exception as e:
+                    st.error(f"Error generating forecast: {e}")

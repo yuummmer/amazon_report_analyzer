@@ -6,14 +6,21 @@ def summarize_text_with_keywords(text, top_keywords, model="gpt-3.5-turbo"):
     Summarize the text using LLM, emphasizing the provided top keywords.
     """
     keyword_str = ", ".join(top_keywords)
-    prompt = f"""
-    You are an expert analyst reviewing an Amazon annual report. Your goal is to write a clear, concise summary
-    of the document while paying special attention to the following important terms:
+prompt = f"""
+    You are a critical analyst reviewing Amazon's annual report through a sociological lens. 
+    Your goal is to extract how Amazon justifies its scale, power, and role in society.
 
-    {keyword_str}
+    Specifically, identify:
+    - Themes related to corporate responsibility, labor practices, or environmental impact
+    - Language used to frame Amazon growth, innovation, or global influence
+    - Any notable shifts in tone or emphasis on public perception
 
-    Here's the report text:
+    Summarize the content below with attention to how Amazon portrays itself — not just what it reports. Keep the summary short - between 200-500 words if possible.
+
+    Text:
     {text}
+
+    Summary:
     """
 
     try:
