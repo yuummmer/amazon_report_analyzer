@@ -50,7 +50,7 @@ Check it out here: [Streamlit Cloud App](https://amazonreportanalyzer-wjhbrs6hyb
 
 ## 💡 Inspiration
 
-Inspired by the [TidyTuesday dataset](https://github.com/rfordatascience/tidytuesday) and a curiosity about how Amazon's language evolves over time, this project started as a simple word frequency plot and grew into an interactive app.
+Inspired by the [TidyTuesday dataset](data/2025/2025-03-25/readme.md) and a curiosity about how Amazon's language evolves over time, this project started as a simple word frequency plot and grew into an interactive app.
 
 ## 🛠️ Running Locally
 
