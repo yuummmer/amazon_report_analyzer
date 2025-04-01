@@ -1,4 +1,4 @@
-# summarizer_guided.py
+import openai
 
 def summarize_text_with_keywords(text, top_keywords, model="gpt-3.5-turbo"):
     """
