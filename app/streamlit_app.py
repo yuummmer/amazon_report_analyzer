@@ -7,6 +7,8 @@ from pdf_utils import (
     get_pdf_text,
     create_vectorstore_from_texts
 )
+# Set OpenAI API key from secrets
+os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
 st.set_page_config(page_title="Amazon Annual Report Analyzer", layout="centered")
 
