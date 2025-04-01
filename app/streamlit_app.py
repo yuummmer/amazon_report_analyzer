@@ -60,3 +60,11 @@ if uploaded_file:
 
         else:
             st.error("No content could be extracted from the PDF.")
+
+# Chunk text manually
+chunk_size = 3000  # Adjust as needed to stay under token limit
+text_chunks = [full_text[i:i+chunk_size] for i in range(0, len(full_text), chunk_size)]
+
+# Summarize chunks
+summary = summarize_text_chunks(text_chunks)
+
