@@ -6,6 +6,7 @@ import tempfile
 from data_loader import load_word_data
 from visuals import plot_top_words
 from llm_summarizer import summarize_text
+from retriever import query_document
 from pdf_utils import (
     get_pdf_text,
     create_vectorstore_from_texts
