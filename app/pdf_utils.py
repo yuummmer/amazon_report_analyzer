@@ -5,11 +5,11 @@ import uuid
 
 import streamlit as st
 from langchain.embeddings import OllamaEmbeddings
-from langchain.vectorstores import Chroma
+from langchain.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import PyPDFLoader
 
-# 🔧 Clean filename for Chroma (removes "(1)" etc.)
+# 🔧 Clean filename for collection naming
 def clean_filename(filename):
     return re.sub(r'\s\(\d+\)', '', filename)
 
@@ -37,7 +37,7 @@ def get_pdf_text(uploaded_file):
         if temp_file and os.path.exists(temp_file.name):
             os.unlink(temp_file.name)
 
-# ✂️ Split long documents into chunks for embeddings
+# ✂️ Split long documents into chunks
 def split_document(documents, chunk_size=1000, chunk_overlap=200):
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
@@ -48,31 +48,21 @@ def split_document(documents, chunk_size=1000, chunk_overlap=200):
     chunks = splitter.split_documents(documents)
     return [c for c in chunks if c.page_content and c.page_content.strip()]
 
-# 🧠 Embedding function (Ollama)
+# 🧠 Embedding function
 def get_embedding_function():
     return OllamaEmbeddings(model="nomic-embed-text")
 
-# 🗂️ Create vectorstore from chunks
-def create_vectorstore(chunks, embedding_function, file_name, vector_store_path="db"):
+# 🗂️ Create FAISS vectorstore (no persist, cloud-friendly)
+def create_vectorstore(chunks, embedding_function):
     valid_chunks = [c for c in chunks if c.page_content and c.page_content.strip()]
     if not valid_chunks:
-        raise ValueError(f"No valid content to process in {file_name}. Skipping.")
+        raise ValueError("No valid content to embed.")
 
-    ids = [str(uuid.uuid5(uuid.NAMESPACE_DNS, doc.page_content)) for doc in valid_chunks]
-    unique_chunks = list({uuid: chunk for uuid, chunk in zip(ids, valid_chunks)}.values())
-
-    vectorstore = Chroma.from_documents(
-        documents=unique_chunks,
-        collection_name=clean_filename(file_name),
-        embedding=embedding_function,
-        ids=ids,
-        persist_directory=vector_store_path
-    )
-    vectorstore.persist()
+    vectorstore = FAISS.from_documents(valid_chunks, embedding_function)
     return vectorstore
 
-# 🏗️ Higher-level function to go from text to vectorstore
+# 🏗️ Full pipeline: from docs to vectorstore
 def create_vectorstore_from_texts(documents, file_name):
     chunks = split_document(documents)
     embeddings = get_embedding_function()
-    return create_vectorstore(chunks, embeddings, file_name)
+    return create_vectorstore(chunks, embeddings)
