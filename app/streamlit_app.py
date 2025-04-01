@@ -3,7 +3,8 @@ import openai
 
 from data_loader import load_word_data
 from visuals import plot_top_words
-from llm_summarizer import summarize_text_chunks  # <--- make sure this is defined!
+from llm_summarizer import summarize_text_chunks
+from summarizer_guided import summarize_chunks_with_keywords
 from retriever import query_document
 from pdf_utils import (
     get_pdf_text,
@@ -32,12 +33,16 @@ st.plotly_chart(fig, use_container_width=True)
 st.header("🧠 LLM Summarization (Experimental)")
 
 uploaded_file = st.file_uploader("Upload an Amazon annual report PDF", type=["pdf"])
+focus_terms = st.text_input(
+    "Optional: Add focus keywords (comma-separated) to guide the summary", 
+    help="Example: sustainability, AWS, logistics"
+)
 
 if uploaded_file:
     with st.spinner("Processing PDF..."):
         documents = get_pdf_text(uploaded_file)
 
-        if documents:
+                if documents:
             # Show sample
             st.subheader("📄 Extracted Sample")
             st.write(documents[0].page_content[:800] + "...")
@@ -50,7 +55,9 @@ if uploaded_file:
             chunk_size = 3000
             text_chunks = [full_text[i:i+chunk_size] for i in range(0, len(full_text), chunk_size)]
 
-            summary = summarize_text_chunks(text_chunks)
+            # Guided summarization
+            keywords = [kw.strip() for kw in focus_terms.split(",")] if focus_terms else None
+            summary = summarize_chunks_with_keywords(text_chunks, keywords=keywords)
 
             st.subheader("📝 Summary")
             st.write(summary)
