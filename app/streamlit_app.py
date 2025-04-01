@@ -1,7 +1,15 @@
 import streamlit as st
+import os
+import re
+import tempfile
+
 from data_loader import load_word_data
 from visuals import plot_top_words
 from llm_summarizer import summarize_text
+from pdf_utils import (
+    get_pdf_text,
+    create_vectorstore_from_texts
+)
 
 st.set_page_config(page_title="Amazon Annual Report Analyzer", layout="centered")
 
@@ -21,13 +29,25 @@ st.plotly_chart(fig, use_container_width=True)
 
 st.header("🧠 LLM Summarization (Experimental)")
 
-text_input = st.text_area("Paste a section of an Amazon 10-K report:")
-if st.button("Summarize"):
-    if text_input:
-        with st.spinner("Summarizing..."):
-            summary = summarize_text(text_input)
-            st.success("Done!")
-            st.markdown("### ✨ Summary")
+uploaded_file = st.file_uploader("Upload a PDF", type=["pdf"])
+
+if uploaded_file:
+    with st.spinner("Processing PDF..."):
+        documents = get_pdf_text(uploaded_file)
+
+        if documents:
+            # Optional: Show preview of extracted text
+            st.subheader("📄 Extracted Sample")
+            st.write(documents[0].page_content[:800] + "...")
+
+            # Create vector store (for later use in RAG/Q&A)
+            create_vectorstore_from_texts(documents, uploaded_file.name)
+
+            # Summarize content
+            full_text = " ".join([doc.page_content for doc in documents])
+            summary = summarize_text(full_text)
+
+            st.subheader("📝 Summary")
             st.write(summary)
-    else:
-        st.warning("Please paste some text first.")
+        else:
+            st.error("No content could be extracted from the PDF.")
