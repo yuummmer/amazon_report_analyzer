@@ -42,7 +42,7 @@ if uploaded_file:
     with st.spinner("Processing PDF..."):
         documents = get_pdf_text(uploaded_file)
 
-                if documents:
+        if documents:
             # Show sample
             st.subheader("📄 Extracted Sample")
             st.write(documents[0].page_content[:800] + "...")
@@ -61,6 +61,5 @@ if uploaded_file:
 
             st.subheader("📝 Summary")
             st.write(summary)
-
         else:
             st.error("No content could be extracted from the PDF.")
