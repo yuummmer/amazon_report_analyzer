@@ -1,4 +1,5 @@
 import streamlit as st
+import openai
 
 from data_loader import load_word_data
 from visuals import plot_top_words
@@ -8,7 +9,7 @@ from pdf_utils import (
     create_vectorstore_from_texts
 )
 # Set OpenAI API key from secrets
-os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 st.set_page_config(page_title="Amazon Annual Report Analyzer", layout="centered")
 
