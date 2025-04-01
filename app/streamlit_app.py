@@ -30,6 +30,16 @@ selected_year = st.selectbox("Select a year to explore:", years)
 fig = plot_top_words(df, selected_year)
 st.plotly_chart(fig, use_container_width=True)
 
+# Get top 10 words from selected year for keyword guidance
+top_words = (
+    df[df["year"] == selected_year]
+    .sort_values(by="n", ascending=False)
+    .head(10)["word"]
+    .tolist()
+)
+
+st.markdown("**Top 10 Words This Year:** " + ", ".join(top_words))
+
 st.header("🧠 LLM Summarization (Experimental)")
 
 uploaded_file = st.file_uploader("Upload an Amazon annual report PDF", type=["pdf"])
