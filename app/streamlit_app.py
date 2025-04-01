@@ -5,7 +5,7 @@ from visuals import plot_top_words
 st.set_page_config(page_title="Amazon Annual Report Analyzer", layout="centered")
 
 st.title("\U0001F4CA Amazon Annual Report Analyzer")
-st.markdown("Explore Amazon's annual reports using word frequencies and AI.")
+st.markdown("Curious about what Amazon talks about in its annual reports? Dive into word trends and AI-generated summaries to spot key themes over time.")
 
 # Load dataset
 df = load_word_data()
