@@ -1,7 +1,7 @@
 import streamlit as st
 from data_loader import load_word_data
 from visuals import plot_top_words
-from app.llm_summarizer import summarize_text
+from llm_summarizer import summarize_text
 
 st.set_page_config(page_title="Amazon Annual Report Analyzer", layout="centered")
 
