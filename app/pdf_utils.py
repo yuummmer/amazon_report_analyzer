@@ -4,7 +4,7 @@ import tempfile
 import uuid
 
 import streamlit as st
-from langchain.embeddings import OllamaEmbeddings
+from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import PyPDFLoader
@@ -50,7 +50,7 @@ def split_document(documents, chunk_size=1000, chunk_overlap=200):
 
 # 🧠 Embedding function
 def get_embedding_function():
-    return OllamaEmbeddings(model="nomic-embed-text")
+    return OpenAIEmbeddings()
 
 # 🗂️ Create FAISS vectorstore (no persist, cloud-friendly)
 def create_vectorstore(chunks, embedding_function):
