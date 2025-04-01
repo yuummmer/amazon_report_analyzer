@@ -3,30 +3,22 @@ import os
 
 client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
-def summarize_text(text):
-    prompt = f"Summarize this text clearly and concisely:\n\n{text}"
-    
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.7,
-    )
-    
-    return response.choices[0].message.content
+def summarize_text_with_keywords(chunk, keywords, model="gpt-3.5-turbo"):
+    keyword_str = ", ".join(keywords) if keywords else "none"
+    prompt = f"""
+Summarize this section of an Amazon annual report with a focus on the following terms: {keyword_str}
 
-def summarize_text_chunks(text_chunks, model="gpt-3.5-turbo"):
-    summaries = []
+Text:
+{chunk}
+"""
 
-    for i, chunk in enumerate(text_chunks):
-        prompt = f"Summarize this part of an Amazon annual report clearly and concisely:\n\n{chunk}"
-        try:
-            response = client.chat.completions.create(
-                model=model,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.5,
-            )
-            summaries.append(response.choices[0].message.content)
-        except Exception as e:
-            summaries.append(f"[Error summarizing chunk {i}]: {str(e)}")
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.5,
+        )
+        return response.choices[0].message.content
 
-    return "\n\n".join(summaries)
+    except Exception as e:
+        return f"[Error summarizing chunk]: {str(e)}"

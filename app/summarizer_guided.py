@@ -53,7 +53,7 @@ def summarize_chunks_with_keywords(chunks, keywords=None, model="gpt-3.5-turbo")
                 temperature=0.5,
 )
 
-            summaries.append(response["choices"][0]["message"]["content"])
+            summaries.append(response.choices[0.message.content)
         except Exception as e:
             summaries.append(f"[Error summarizing chunk {i}]: {str(e)}")
 
