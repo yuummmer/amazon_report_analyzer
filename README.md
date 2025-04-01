@@ -1,16 +1,35 @@
-# Amazon Annual Report Analyzer
+# Amazon Annual Report Analyzer (RAG-powered)
 
-Analyze and explore Amazon’s annual reports using word frequencies and a RAG-based LLM system to gain insights.
+Amazon Annual Report Analyzer is a Streamlit app that helps you explore trends in Amazon’s annual reports using top keywords, LLM-powered summaries, and a RAG (Retrieval-Augmented Generation) model for document Q&A.
+
+Upload a PDF annual report and dive into AI-generated insights — all grounded in the original source material.
 
 ## 🔍 What It Does
 
-This app processes and visualizes word frequency data from Amazon's annual 10-K reports. It allows users to:
+### ✅ Yearly Word Trend Visualization
+Load pre-cleaned word frequency data for Amazon annual reports
 
-- View the most frequently used words over the years  
-- Spot trends and shifts in Amazon’s communication  
-- Explore interactive charts and insights  
+Select a year and instantly view the top 10 words used that year
 
-✨ Stay tuned: LLM-based summarization is coming soon!
+Interactive visualization using Plotly
+
+### 🧠 Keyword-Guided LLM Summarization
+Upload an annual report PDF
+
+Automatically extracts, chunks, and filters text
+
+Generates focused summaries per top keyword from the selected year
+
+Uses OpenAI's GPT-3.5 model for concise theme extraction
+
+### 💬 RAG-based Q&A Interface
+Ask custom questions about the uploaded report
+
+Backed by a retrieval-augmented generation (RAG) pipeline
+
+Uses FAISS vectorstore + keyword-aware prompt injection
+
+Answers are generated strictly from the PDF content, ensuring grounded and trustworthy responses
 
 ## 🌐 Live App
 
@@ -18,14 +37,16 @@ Check it out here: [Streamlit Cloud App](https://amazonreportanalyzer-wjhbrs6hyb
 
 ## 🗃️ Project Structure
 
-| Folder/File             | Description                                |
-|-------------------------|--------------------------------------------|
-| `app/streamlit_app.py`  | Main app script                            |
-| `app/data_loader.py`    | Loads and prepares word frequency data     |
-| `app/visuals.py`        | Visualization utilities                    |
-| `data/`                 | Word frequency datasets                    |
-| `requirements.txt`      | App dependencies                           |
-| `README.md`             | You're here! 😄                             |
+| Folder/File              | Description                                                                      |
+|--------------------------|----------------------------------------------------------------------------------|
+| `app/streamlit_app.py`   | Main app script                                                                  |
+| `app/data_loader.py`     | Loads and prepares word frequency data                                           |
+| `app/visuals.py`         | Plotly-based visualization utilities                                             |
+| `app/pdf_utils.py`       | Extracts text from PDFs, splits documents, and creates FAISS vectorstore         |
+| `data/`                  | Word frequency datasets                                                          |
+| `requirements.txt`       | App dependencies                                                                 |
+| `README.md`              | You're here! 😄                                                                  |
+
 
 ## 💡 Inspiration
 
