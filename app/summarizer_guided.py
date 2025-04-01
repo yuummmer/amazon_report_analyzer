@@ -17,9 +17,9 @@ def summarize_text_with_keywords(text, top_keywords, model="gpt-3.5-turbo"):
     """
 
     try:
-        client = openai.OpenAI(api_key=os.environ["OPEN_API_KEY"]
+        client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
                                
-        response = clien.chat.completions.create(
+        response = client.chat.completions.create(
             model=model,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.5,
