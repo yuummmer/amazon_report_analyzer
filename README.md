@@ -14,7 +14,7 @@ This app processes and visualizes word frequency data from Amazon's annual 10-K 
 
 ## 🌐 Live App
 
-Check it out here: [Streamlit Cloud App](https://amazon-report-analyzer.streamlit.app)
+Check it out here: [Streamlit Cloud App]([https://amazon-report-analyzer.streamlit.app](https://amazonreportanalyzer-wjhbrs6hybvgwyy4ntfbjt.streamlit.app/))
 
 ## 🗃️ Project Structure
 
