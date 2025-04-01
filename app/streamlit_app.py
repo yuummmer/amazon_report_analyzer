@@ -3,12 +3,13 @@ import openai
 
 from data_loader import load_word_data
 from visuals import plot_top_words
-from llm_summarizer import summarize_text
+from llm_summarizer import summarize_text_chunks  # <--- make sure this is defined!
 from retriever import query_document
 from pdf_utils import (
     get_pdf_text,
     create_vectorstore_from_texts
 )
+
 # Set OpenAI API key from secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
@@ -37,34 +38,22 @@ if uploaded_file:
         documents = get_pdf_text(uploaded_file)
 
         if documents:
-            # Show a sample of the extracted text
+            # Show sample
             st.subheader("📄 Extracted Sample")
             st.write(documents[0].page_content[:800] + "...")
 
-            # Create vector store from extracted documents
+            # Create vectorstore
             vectorstore = create_vectorstore_from_texts(documents, uploaded_file.name)
 
-            # Summarize entire document with LLM
+            # 🔁 Summarize in chunks
             full_text = " ".join(doc.page_content for doc in documents)
-            summary = summarize_text(full_text)
+            chunk_size = 3000
+            text_chunks = [full_text[i:i+chunk_size] for i in range(0, len(full_text), chunk_size)]
+
+            summary = summarize_text_chunks(text_chunks)
 
             st.subheader("📝 Summary")
             st.write(summary)
 
-            # Future: Q&A interface here
-            # query = st.text_input("Ask a question about this report:")
-            # if query:
-            #     answer = query_document(vectorstore, query)
-            #     st.subheader("💬 Answer")
-            #     st.write(answer)
-
         else:
             st.error("No content could be extracted from the PDF.")
-
-# Chunk text manually
-chunk_size = 3000  # Adjust as needed to stay under token limit
-text_chunks = [full_text[i:i+chunk_size] for i in range(0, len(full_text), chunk_size)]
-
-# Summarize chunks
-summary = summarize_text_chunks(text_chunks)
-
