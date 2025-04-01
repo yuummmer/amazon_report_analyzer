@@ -17,13 +17,14 @@ def summarize_text_with_keywords(text, top_keywords, model="gpt-3.5-turbo"):
     """
 
     try:
-        import openai
-        response = openai.ChatCompletion.create(
+        client = openai.OpenAI(api_key=os.environ["OPEN_API_KEY"]
+                               
+        response = clien.chat.completions.create(
             model=model,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.5,
         )
-        return response["choices"][0]["message"]["content"]
+        return response.choices[0].message.content
 
     except Exception as e:
         return f"[Error generating summary]: {str(e)}"
@@ -53,7 +54,7 @@ def summarize_chunks_with_keywords(chunks, keywords=None, model="gpt-3.5-turbo")
                 temperature=0.5,
 )
 
-            summaries.append(response.choices[0.message.content)
+            summaries.append(response.choices[0].message.content)
         except Exception as e:
             summaries.append(f"[Error summarizing chunk {i}]: {str(e)}")
 
