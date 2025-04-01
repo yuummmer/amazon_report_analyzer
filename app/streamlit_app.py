@@ -29,6 +29,19 @@ selected_year = st.selectbox("Select a year to explore:", years)
 fig = plot_top_words(df, selected_year)
 st.plotly_chart(fig, use_container_width=True)
 
+# Add descriptive summary below the chart
+top_words_list = (
+    df[df["year"] == selected_year]
+    .sort_values(by="n", ascending=False)
+    .head(10)["word"]
+    .tolist()
+)
+
+st.caption(
+    f"This chart shows the top 10 most frequent words in Amazon's {selected_year} annual report. "
+    f"Top terms include: {', '.join(top_words_list)}."
+)
+
 # Get top 10 words from selected year for keyword guidance
 top_words = (
     df[df["year"] == selected_year]
@@ -119,7 +132,7 @@ Answer:"""
                     st.error(f"Error generating answer: {e}")
         else:
             st.warning("Please upload and process a PDF first.")
-            
+
     # 🔮 Forecast Section
     st.subheader("🔮 What's Next? LLM Forecast")
     if "summary_text" in st.session_state:
